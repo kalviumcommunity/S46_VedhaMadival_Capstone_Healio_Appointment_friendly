@@ -20,7 +20,6 @@ router.get('/patients/:id' , (req,res) =>{
 })
 
 //POST API USED
-
 router.post('/login' , (req , res)=>{
     res.json({message:"Created a new user"})
 })
@@ -35,7 +34,6 @@ router.post('/new-patient' , (req , res)=>{
 
 
 //PUT API USED
-
 router.put('/doctor-edit' , (req , res)=>{
     res.json({message:"Edited doctor details"})
 })
