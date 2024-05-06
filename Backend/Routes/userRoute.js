@@ -34,10 +34,15 @@ router.post('/new-patient' , (req , res)=>{
 })
 
 
+//PUT API USED
 
+router.put('/doctor-edit' , (req , res)=>{
+    res.json({message:"Edited doctor details"})
+})
 
-
-
+router.put('/patient-edit' , (req , res)=>{
+    res.json({message:"Edited patient details"})
+})
 
 
 module.exports = router;
