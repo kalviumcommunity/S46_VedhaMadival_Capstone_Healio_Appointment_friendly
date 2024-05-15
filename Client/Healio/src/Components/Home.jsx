@@ -1,6 +1,7 @@
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
-import React from "react";
+/* eslint-disable react/no-unescaped-entities */
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import img from "../Assets/img.png";
 import doc from "../Assets/Finddoc.png";
 import arrow from "../Assets/right-arrow.png";
@@ -9,33 +10,15 @@ import con from "../Assets/Consultdoc.png";
 import care from "../Assets/care.png";
 import best from "../Assets/best.png";
 import Footer from "./Footer";
-import {Link} from "react-router-dom";
+import axios from "axios";
+import Header from "./Header";
 
 function Home() {
   return (
     <>
       <div className="mx-auto max-w-screen-xl px-4 lg:px-0">
         {/* Header */}
-        <div className="flex flex-col py-4">
-          <div className="flex items-center justify-between font-poppins">
-            <div className="font-bold text-2xl">Healio+</div>
-            <button className="lg:hidden bg-[#37BFC4] hover:bg-[#ff7974] text-white font-bold py-2 px-4 text-xl rounded">
-              Menu
-            </button>
-            <div className="hidden lg:flex space-x-14">
-              <p>Home</p>
-              <p>Services</p>
-              <p>Find a Doctor</p>
-              <p>About Us</p>
-            </div>
-            <div>
-              <Link to="/Login"><button className="bg-[#37BFC4] hover:bg-[#ff7974] text-white font-bold py-2 px-4 text-xl rounded">
-                Login
-              </button></Link>
-            </div>
-          </div>
-        </div>
-
+        <Header />
         {/* Info part1 */}
         <div className="flex flex-col lg:flex-row items-center justify-between">
           <div className="py-4 mt-8 lg:mt-16 lg:w-2/3">
@@ -74,13 +57,12 @@ function Home() {
         </div>
 
         {/* Info part2 */}
-        <div className="mt-24 h-screen">
+        <div className="mt-24 h-full">
           <p className="text-3xl lg:text-4xl text-center font-bold font-poppins mb-8">
             Three Steps to Wellness: simple actions, ensuring comprehensive care
           </p>
 
           <div className="flex flex-col lg:flex-row justify-between space-y-12 lg:space-y-0 lg:space-x-12">
-
             {/* Step 1 */}
             <div className="bg-white w-full lg:w-[30%] flex flex-col items-center justify-center shadow-inner drop-shadow-lg rounded-xl">
               <img
@@ -154,17 +136,9 @@ function Home() {
         </div>
 
         {/* Section 1 */}
-        <div className=" hidden lg:flex  items-center justify-center h-screen">
-          <div className="flex flex-col items-center justify-center lg:w-3/5">
-            <img
-              src={best}
-              className="rounded-lg"
-              style={{ height: "400px", width: "600px" }}
-              alt="Experience Personalized Care"
-            />
-          </div>
-          <div className="w-full lg:w-2/5 ml-8 text-left">
-            <h1 className="font-poppins font-bold text-3xl mb-8 lg:mb-12">
+        <div className=" hidden lg:flex items-center justify-between p-12">
+          <div className="w-full lg:w-2/5 text-left">
+            <h1 className="font-poppins font-bold text-3xl lg:mb-12">
               Experience Personalized Care
             </h1>
             <p className="font-poppins font-extralight">
@@ -177,12 +151,30 @@ function Home() {
               healthcare needs with excellence and integrity.
             </p>
           </div>
+
+          <div className="flex flex-col">
+            <img
+              src={best}
+              className="rounded-lg"
+              style={{ height: "400px", width: "600px" }}
+              alt="Experience Personalized Care"
+            />
+          </div>
         </div>
 
         {/* Section 2 */}
-        <div className="hidden lg:flex items-center justify-center mt-12 mb-24">
-          <div className="w-full lg:w-2/5 mr-8 text-right">
-            <h1 className="font-poppins font-bold text-4xl mb-8 lg:mb-12">
+        <div className="hidden lg:flex items-center justify-between p-12">
+          <div className="flex flex-col ">
+            <img
+              src={care}
+              className="rounded-lg"
+              style={{ height: "400px", width: "600px" }}
+              alt="Nation's Best Doctors Here"
+            />
+          </div>
+
+          <div className="w-full lg:w-2/5 text-right">
+            <h1 className="font-poppins font-bold text-3xl lg:mb-12">
               Nation's Best Doctors Here
             </h1>
             <p className="font-poppins font-extralight">
@@ -196,14 +188,6 @@ function Home() {
               well-being and dedicated to providing exceptional care at every
               encounter.
             </p>
-          </div>
-          <div className="flex flex-col items-center justify-center lg:w-3/5">
-            <img
-              src={care}
-              className="rounded-lg"
-              style={{ height: "400px", width: "600px" }}
-              alt="Nation's Best Doctors Here"
-            />
           </div>
         </div>
       </div>

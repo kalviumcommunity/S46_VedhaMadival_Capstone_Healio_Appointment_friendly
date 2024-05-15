@@ -1,0 +1,25 @@
+meta {
+  name: Create a new user
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:4000/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": 1,
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "password": "abcdefgh",
+    "isdoctor": false,
+    "isadmin": false,
+    "seenNotifications": [],
+    "unseenNotifications": []
+  }
+  
+}
