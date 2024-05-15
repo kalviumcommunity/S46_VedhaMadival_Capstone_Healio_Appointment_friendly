@@ -1,21 +1,62 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../Models/UserModel");
+const bcrypt = require("bcryptjs");
 
 
 //Write Performed: Create a new user
 router.post("/register", async (req, res) => {
-    try {
-      const newUser = User(req.body);
-      await newUser.save()
-      console.log(newUser);
-      res.status(200).send({ message: "User Created Successfully", success: true });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ message: "Error creating user", success: false });
+  try {
+    const userExists = await User.findOne({ email: req.body.email });
+
+    if (userExists) {
+      return res
+        .status(400)
+        .send({ message: "User already exists", success: false });
     }
-  });
-  
+
+    const password = req.body.password;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    req.body.password = hashedPassword;
+    const newUser = new User(req.body);
+    await newUser.save();
+    console.log(newUser);
+    res
+      .status(200)
+      .send({ message: "User Created Succesfully", success: true });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Error creating user", success: false });
+  }
+});
+
+router.post("/login", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res
+        .status(200)
+        .send({ message: "User does not exist", success: false });
+    }
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    if (!isMatch) {
+      return res
+        .status(404)
+        .send({ message: "Password is incorrect", success: false });
+    }
+      return res.status(200).send({
+        message: "User Verified & Login Successful",
+        success: true,
+      });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error logging in", success: false, error });
+  }
+});
 
 
 // Read Performed: Get all users
