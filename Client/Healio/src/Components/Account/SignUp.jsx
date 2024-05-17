@@ -11,6 +11,7 @@ import {
   SetAuthenticated,
 } from "../../Redux/AuthenticateReducer";
 import { HideLoading, ShowLoading } from "../../Redux/LoaderReducer";
+import cookie from "js-cookie";
 
 function SignUp() {
   const dispatch = useDispatch();
@@ -32,13 +33,15 @@ function SignUp() {
         values
       );
 
-      dispatch(SetAuthenticated());
+      
       dispatch(HideLoading());
 
       if (response.data.success) {
         toast.success(response.data.message);
-        toast("Redirecting to the Login Page");
-        navigateto("/Login");
+        toast("Redirecting to the Home Page");
+        cookie.set("token" , response.data.data);
+        dispatch(SetAuthenticated());
+        navigateto("/");
       } else {
         toast.error(response.data.message);
       }
@@ -47,6 +50,9 @@ function SignUp() {
       toast.error("Something went wrong");
     }
   };
+
+
+
 
   return (
     <>
