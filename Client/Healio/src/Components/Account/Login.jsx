@@ -12,6 +12,7 @@ import {
   SetAuthenticated,
   SetUnauthenticated,
 } from "../../Redux/AuthenticateReducer";
+import cookie from "js-cookie";
 
 function Login() {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ function Login() {
         toast.success(response.data.message);
         toast.success("Redirecting to the Home Page");
         localStorage.setItem("token", response.data.data);
+        cookie.set("token", response.data.data);
         navigateto("/");
       } else {
         toast.error(response.data.message);

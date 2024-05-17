@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../Models/UserModel");
 const bcrypt = require("bcryptjs");
-
+const jwt = require("jsonwebtoken");
 
 //Write Performed: Create a new user
 router.post("/register", async (req, res) => {
@@ -22,10 +22,16 @@ router.post("/register", async (req, res) => {
     req.body.password = hashedPassword;
     const newUser = new User(req.body);
     await newUser.save();
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
     console.log(newUser);
-    res
-      .status(200)
-      .send({ message: "User Created Succesfully", success: true });
+    res.status(200).send({
+      message: "User Created Succesfully",
+      success: true,
+      data: token,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: "Error creating user", success: false });
@@ -45,11 +51,16 @@ router.post("/login", async (req, res) => {
       return res
         .status(404)
         .send({ message: "Password is incorrect", success: false });
-    }
+    } else {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1d",
+      });
       return res.status(200).send({
         message: "User Verified & Login Successful",
         success: true,
+        data: token,
       });
+    }
   } catch (error) {
     console.log(error);
     res
@@ -57,7 +68,6 @@ router.post("/login", async (req, res) => {
       .send({ message: "Error logging in", success: false, error });
   }
 });
-
 
 // Read Performed: Get all users
 router.get("/user-info-all", async (req, res) => {
@@ -67,7 +77,7 @@ router.get("/user-info-all", async (req, res) => {
     res.status(200).send({
       message: "All users retrieved successfully",
       success: true,
-      data: users.map(user => ({
+      data: users.map((user) => ({
         name: user.name,
         email: user.email,
         isdoctor: user.isdoctor || false,
@@ -77,81 +87,49 @@ router.get("/user-info-all", async (req, res) => {
       })),
     });
   } catch (error) {
-    return res.status(500).send({ message: "Error getting user info", success: false, error });
+    return res
+      .status(500)
+      .send({ message: "Error getting user info", success: false, error });
   }
 });
 
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //GET API USED
-router.get('/doctors' , (req , res)=>{
-    res.json({message:"Capstone Get all doctors request successful"})
-})
+router.get("/doctors", (req, res) => {
+  res.json({ message: "Capstone Get all doctors request successful" });
+});
 
-router.get('/doctors/:id' , (req , res)=>{
-    res.json({message:"Capstone Get doctor by id request successful"})
-})
+router.get("/doctors/:id", (req, res) => {
+  res.json({ message: "Capstone Get doctor by id request successful" });
+});
 
-router.get('/patients', (req,res) =>{
-    res.json({message:"Capstone Get all patients request successful"})
-})
+router.get("/patients", (req, res) => {
+  res.json({ message: "Capstone Get all patients request successful" });
+});
 
-router.get('/patients/:id' , (req,res) =>{
-    res.json({message:"Capstone Get patient by id request successful"})
-})
+router.get("/patients/:id", (req, res) => {
+  res.json({ message: "Capstone Get patient by id request successful" });
+});
 
 //POST API USED
-router.post('/login' , (req , res)=>{
-    res.json({message:"Created a new user"})
-})
+router.post("/login", (req, res) => {
+  res.json({ message: "Created a new user" });
+});
 
-router.post('/new-doctor' , (req , res)=>{
-    res.json({message:"Created a new doctor"})
-})
+router.post("/new-doctor", (req, res) => {
+  res.json({ message: "Created a new doctor" });
+});
 
-router.post('/new-patient' , (req , res)=>{
-    res.json({message:"Created a new patient"})
-})
-
+router.post("/new-patient", (req, res) => {
+  res.json({ message: "Created a new patient" });
+});
 
 //PUT API USED
-router.put('/doctor-edit' , (req , res)=>{
-    res.json({message:"Edited doctor details"})
-})
+router.put("/doctor-edit", (req, res) => {
+  res.json({ message: "Edited doctor details" });
+});
 
-router.put('/patient-edit' , (req , res)=>{
-    res.json({message:"Edited patient details"})
-})
-
+router.put("/patient-edit", (req, res) => {
+  res.json({ message: "Edited patient details" });
+});
 
 module.exports = router;

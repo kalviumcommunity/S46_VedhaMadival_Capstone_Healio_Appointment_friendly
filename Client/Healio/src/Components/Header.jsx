@@ -1,20 +1,22 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { SetAuthenticated, SetUnauthenticated } from "../Redux/AuthenticateReducer";
+import { SetAuthenticated } from "../Redux/AuthenticateReducer";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import user from "../Assets/user-account.png";
+import cookie from "js-cookie";
 
 function Header() {
-  // const dispatch = useDispatch();
-  // const { isAuthenticated } = useSelector((state) => state.isAuthenticated);
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.isAuthenticated);
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   if (token) {
-  //     dispatch(SetAuthenticated());
-  //   }
-  // });
+  useEffect(() => {
+    const token = cookie.get("token")
+    if (token) {
+      dispatch(SetAuthenticated());
+    }
+  });
 
   return (
     <>
@@ -39,7 +41,7 @@ function Header() {
             </div>
             <div className="flex flex-row">
 
-{/* 
+
               {isAuthenticated ? (
                 <div className="flex flex-row">
                   <Link to="/Profile">
@@ -51,7 +53,7 @@ function Header() {
                     </div>
                   </Link>
                 </div>
-              ) : ( */}
+              ) : (
                 <Link to="/Login">
                   <div>
                     <button className="bg-[#37BFC4] hover:bg-[#ff7974] text-white font-bold py-2 px-4 text-xl rounded">
@@ -59,7 +61,7 @@ function Header() {
                     </button>
                   </div>
                 </Link>
-              {/* )} */}
+              )}
             </div>
           </div>
         </div>
