@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -9,14 +9,14 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 function ApplyDoctor({ datas }) {
-  // const navigateto = useNavigate();
   const dispatch = useDispatch();
   const { userData: data } = useSelector((state) => state.userData);
   const userId = data._id;
 
-  const [applied, setApplied] = useState(
-    localStorage.getItem("Applied") || false
+  const [submitted, setSubmitted] = useState(
+    localStorage.getItem("Submitted") || false
   );
+  const [doctorData, setDoctorData] = useState({});
 
   const {
     register,
@@ -27,13 +27,9 @@ function ApplyDoctor({ datas }) {
   const onSubmit = async (data) => {
     try {
       dispatch(ShowLoading());
-
       const response = await axios.post(
-        "http://localhost:4000/apply-doctor-account",
-        {
-          ...data,
-          userId: userId,
-        },
+        "http://localhost:4000/doctor-details",
+        { ...data, userId },
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
@@ -42,37 +38,106 @@ function ApplyDoctor({ datas }) {
       );
 
       if (response.data.exists) {
-        toast.error("Doctor with same Email ID already Exists!");
-        dispatch(HideLoading());
+        toast.error("Doctor with same Email ID already exists!");
       } else {
-        setApplied(localStorage.setItem("Applied", true));
-        setTimeout(() => {
-          toast("You will be Notified once your Request is Approved");
-          dispatch(HideLoading());
-        }, 1000);
-
+        setSubmitted(localStorage.setItem("Submitted", true));
+        toast("You will be notified once your request is approved");
         if (response.data.success) {
           toast.success(response.data.message);
+          window.location.reload()
         } else {
           toast.error(response.data.message);
         }
       }
-    } catch {
-      console.log(errors);
-      console.log("error");
+      dispatch(HideLoading());
+    } catch (error) {
+      console.log(error);
       toast.error("Something went wrong");
       dispatch(HideLoading());
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        dispatch(ShowLoading());
+        const response = await axios.get(
+          "http://localhost:4000/get-doctor-details",
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+            params: { userId },
+          }
+        );
+
+        if (response.data.success) {
+          setDoctorData(response.data.data);
+          setSubmitted(true);
+          toast.success(response.data.message);
+        } else {
+          setSubmitted(false);
+          toast.error(response.data.message);
+        }
+        dispatch(HideLoading());
+      } catch (error) {
+        console.log(error);
+        dispatch(HideLoading());
+      }
+    };
+    fetchData();
+  }, [dispatch, userId]);
+
   return (
     <div className="h-80vh">
       <div className="p-2 border border-slate-500 h-[80% ] mt-6 mr-4 rounded-lg">
         <div className="font-poppins text-xl h-full">
-          {applied ? (
-            <div className="font-bold text-2xl flex items-center justify-center">
-              Wait For Approval!!
-            </div> 
+          {submitted ? (
+            <div className="mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+            <div className="p-4 bg-gray-800 text-white">
+              <h2 className="font-bold text-2xl">Doctor Details</h2>
+            </div>
+          
+            <div className="p-2">
+              <p className="text-gray-800  p-2 text-base">
+                <strong>First Name :</strong> {doctorData.firstname}
+              </p>
+              <p className="text-gray-800 p-2 text-base">
+                <strong>Last Name :</strong> {doctorData.lastname}
+              </p>
+              <p className="text-gray-800 p-2 text-base">
+                <strong>Email :</strong> {doctorData.email}
+              </p>
+              <p className="text-gray-800 p-2 text-base">
+                <strong>Phone Number :</strong> {doctorData.phoneNumber}
+              </p>
+              <p className="text-gray-800 p-2 text-base">
+                <strong>Website :</strong> {doctorData.website}
+              </p>
+              <p className="text-gray-800 p-2 text-base">
+                <strong>Address :</strong> {doctorData.address}
+              </p>
+              <p className="text-gray-800 p-2 text-base">
+                <strong>Specialization :</strong> {doctorData.specialization}
+              </p>
+              <p className="text-gray-800 p-2 text-base">
+                <strong>Experience :</strong> {doctorData.experience} years
+              </p>
+              <p className="text-gray-800 p-2 text-base">
+                <strong>Fee per Consultation :</strong> Rs.{doctorData.feePerConsultation}
+              </p>
+              <p className="text-gray-800 p-2 text-base">
+                <strong>Cal.com EventType Link :</strong> {doctorData.calEventypeLink}
+              </p>
+              <p className="text-gray-800 p-2 text-base">
+                <div className="flex">
+                <strong>Approval Status :</strong> <p className="text-red-500 ml-2">{doctorData.status}</p>
+                </div>
+              
+              </p>
+            </div>
+          </div>
+          
           ) : (
             <div>
               <h2 className="font-bold text-xl mb-5 text-slate-500 text-left">
@@ -93,6 +158,7 @@ function ApplyDoctor({ datas }) {
                     name="firstname"
                     placeholder="Firstname"
                     className="h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md focus:outline-none focus:shadow-outline shadow-sm block w-full sm:text-sm"
+                    defaultValue={doctorData.firstname || ""}
                     {...register("firstname", {
                       required: "FirstName is required",
                       minLength: {
@@ -114,6 +180,7 @@ function ApplyDoctor({ datas }) {
                     name="lastname"
                     placeholder="Lastname"
                     className="h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    defaultValue={doctorData.lastname || ""}
                     {...register("lastname", {
                       required: "LastName is required",
                       minLength: {
@@ -135,6 +202,7 @@ function ApplyDoctor({ datas }) {
                     name="email"
                     placeholder="Email"
                     className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    defaultValue={doctorData.email || ""}
                     {...register("email", {
                       required: "Email is required",
                       pattern: {
@@ -156,6 +224,7 @@ function ApplyDoctor({ datas }) {
                     name="phone"
                     placeholder="Phone Number"
                     className=" h-10 p-2  border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    defaultValue={doctorData.phoneNumber || ""}
                     {...register("phoneNumber", {
                       required: "Phone number is required",
                       pattern: {
@@ -177,6 +246,7 @@ function ApplyDoctor({ datas }) {
                     name="website"
                     placeholder="Website"
                     className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    defaultValue={doctorData.website || ""}
                     {...register("website", {
                       required: "Website is required",
                     })}
@@ -194,6 +264,7 @@ function ApplyDoctor({ datas }) {
                     name="address"
                     placeholder="Address"
                     className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    defaultValue={doctorData.address || ""}
                     {...register("address", {
                       required: "Address is required",
                     })}
@@ -216,6 +287,7 @@ function ApplyDoctor({ datas }) {
                     id="specialization"
                     placeholder="Specialization"
                     className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    defaultValue={doctorData.specialization || ""}
                     {...register("specialization", {
                       required: "Specialization is required",
                     })}
@@ -232,8 +304,9 @@ function ApplyDoctor({ datas }) {
                   <input
                     type="text"
                     id="experience"
-                    placeholder="experience"
+                    placeholder="Experience"
                     className="  h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    defaultValue={doctorData.experience || ""}
                     {...register("experience", {
                       required: "Experience is required",
                     })}
@@ -248,8 +321,9 @@ function ApplyDoctor({ datas }) {
                   <input
                     type="text"
                     id="fee"
-                    placeholder="fee"
-                    className="b h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    placeholder="Fee"
+                    className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    defaultValue={doctorData.feePerConsultation || ""}
                     {...register("feePerConsultation", {
                       required: "Fee is required",
                     })}
@@ -270,10 +344,11 @@ function ApplyDoctor({ datas }) {
                     Cal.com EventType Link :
                   </label>
                   <input
-                    type="url"
+                    type="text"
                     id="eventTypeLink"
                     placeholder="EventTypeLink"
                     className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    defaultValue={doctorData.calEventypeLink || ""}
                     {...register("calEventypeLink", {
                       required: "EventTypeLink is required",
                     })}
@@ -292,13 +367,12 @@ function ApplyDoctor({ datas }) {
                     id="api_key"
                     placeholder="Api_key"
                     className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    defaultValue={doctorData.apikey || ""}
                     {...register("apikey", {
                       required: "EventTypeLink is required",
                     })}
                   />
-                  {errors.apikey && (
-                    <p>{errors.apikey.message}</p>
-                  )}
+                  {errors.apikey && <p>{errors.apikey.message}</p>}
                 </div>
 
                 <div>
