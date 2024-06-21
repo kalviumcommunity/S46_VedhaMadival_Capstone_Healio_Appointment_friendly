@@ -47,17 +47,13 @@ const doctorSchema = new Schema(
             type:String,
             required: true,
         },
-        fromTime: {
-            type:String,
-            required:true,
-        },
-        toTime: {
-            type:String,
-            required:true,
+        apikey: {
+            type: String,   
+            required: true,
         },
         status: {
             type: String,
-            default: "pending",
+            default: "Pending",
         },
     }, 
     {

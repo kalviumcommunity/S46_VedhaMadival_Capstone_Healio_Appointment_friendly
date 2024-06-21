@@ -36,6 +36,7 @@ function PatientDetails() {
       if (response.data.success) {
         toast.success(response.data.message);
         setSubmitted(localStorage.setItem("submitted", true));
+        window.location.reload()
       } else {
         toast.error(response.data.message);
       }

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../Models/UserModel");
 const Patient = require("../Models/PatientModel");
+const Doctor = require("../Models/DoctorModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../Middlewares/authMiddleware")
@@ -24,6 +25,7 @@ router.post("/register", async (req, res) => {
     req.body.password = hashedPassword;
     const newUser = new User(req.body);
     await newUser.save();
+    
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
@@ -168,9 +170,63 @@ router.get("/get-patient-details", authMiddleware,async (req, res) => {
 );
 
 
+//Storing Doctor Details
+router.post("/doctor-details", authMiddleware, async (req, res) => {
+  try {
+    //Checking Existing doctor
+    const { email } = req.body;
+    const existingDoctor = await Doctor.findOne({
+      email,
+    });
 
+    if (existingDoctor) {
+      return res.status(200).send({ exists: true });
+    } else {
+      const newdoctor = new Doctor({ ...req.body, status: "Pending" });
+      console.log(newdoctor);
+      await newdoctor.save();
 
+      const adminUser = await User.findOne({ isadmin: true });
 
+      const unseenNotifications = adminUser.unseenNotifications;
+      unseenNotifications.push({
+        type: "Doctor-Approval-Pending",
+        message: `${newdoctor.firstname} ${newdoctor.lastname} has applied for a doctor account`,
+        data: {
+          doctorId: newdoctor._id,
+          name: newdoctor.firstname + " " + newdoctor.lastname,
+        },
+        onClickPath: "/admin/doctors",
+      });
+      await User.findByIdAndUpdate(adminUser._id, { unseenNotifications });
+      res.status(200).send({
+        message: "Doctor Application Submitted Successfully",
+        success: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error Applying as a Doctor", success: false });
+  }
+});
+
+//Getting Doctor Details of a single Doctor
+router.get("/get-doctor-details", authMiddleware, async (req, res) => {
+  try {
+    const doctor = await Doctor.findOne({ userId: req.body.userId });
+
+    if (doctor) {
+      res.status(200).send({ success: true, data: doctor });
+    } else {
+      res.status(404).send({ success: false, message: "Doctor not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Error fetching doctor details", success: false });
+  }
+});
 
 
 
