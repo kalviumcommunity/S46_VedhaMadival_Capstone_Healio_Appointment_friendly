@@ -12,6 +12,10 @@ import AdminDoctors from "./Components/UserDashboard/DashboardContent/AdminDocto
 import AdminConsult from "./Components/UserDashboard/DashboardContent/AdminConsult";
 import ApplyDoctor from "./Components/UserDashboard/DashboardContent/ApplyDoctor";
 import PersonalProfile from "./Components/UserDashboard/DashboardContent/PersonalProfile";
+import Notifications from "./Components/UserDashboard/Notifications";
+import ConsultHere from "./Components/ConsultHere";
+import Book from "./Components/Book";
+import Appointment from "./Components/Appointment";
 
 function App() {
   const { loading } = useSelector((state) => state.loader);
@@ -30,6 +34,10 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/Profile" element={<Profile />} />
+        <Route path="/Notifications" element={<Notifications/>}/>
+        <Route path="/Consult" element={<ConsultHere/>}/>
+        <Route path="/Booking/:doctorId" element={<Book/>}/>
+        <Route path="/Appointment" element={<Appointment/>}/>
         <Route
           path="/Allusers"
           element={

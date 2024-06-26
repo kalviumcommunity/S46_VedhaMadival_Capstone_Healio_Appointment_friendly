@@ -20,7 +20,7 @@ function Sidebar({ setActivePage }) {
   const navigateto = useNavigate();
   const dispatch = useDispatch();
   const { userData: data } = useSelector((state) => state.userData);
-  console.log(data)
+  console.log(data);
 
   const loggingOut = () => {
     const token = cookie.get("token");
@@ -29,7 +29,8 @@ function Sidebar({ setActivePage }) {
       dispatch(ShowLoading());
 
       setTimeout(() => {
-        cookie.remove("token")
+        cookie.remove("token");
+        localStorage.clear();
         navigateto("/");
 
         window.location.reload();
@@ -55,9 +56,15 @@ function Sidebar({ setActivePage }) {
             </div>
 
             <hr className="border-t-2 border-gray-300" />
-            <div className="text-base text-white font-light">
-              Role : {data.role}
-            </div>
+            {data.role ? (
+              <div className="text-base text-white font-light">
+                Role : {data.role}
+              </div>
+            ) : (
+              <div className="text-base text-white font-light">
+                Role : Admin
+              </div>
+            )}
           </div>
 
           {data.isadmin ? (

@@ -212,7 +212,7 @@ router.post("/doctor-details", authMiddleware, async (req, res) => {
   }
 });
 
-//Getting Doctor Details of a single Doctor
+//Getting Doctor Details of a single Doctor for Profile
 router.get("/get-doctor-details", authMiddleware, async (req, res) => {
   try {
     const doctor = await Doctor.findOne({ userId: req.body.userId });
@@ -228,19 +228,114 @@ router.get("/get-doctor-details", authMiddleware, async (req, res) => {
   }
 });
 
+//Getting Doctor Details of a single Doctor for Booking
+router.get("/get-doctor-by-id/:doctorId", async (req, res) => {
+  try {
+    const doctorId = req.params.doctorId;
+    const doctor = await Doctor.findById(doctorId);
 
-
-
-
-
-
-
-
-
-//GET API USED
-router.get("/doctors", (req, res) => {
-  res.json({ message: "Capstone Get all doctors request successful" });
+    if (!doctor) {
+      return res.status(404).send({ message: "Doctor does not exist", success: false });
+    } else {
+      res.status(200).send({
+        message: "Doctor found",
+        success: true,
+        data: {
+          _id: doctor._id,
+          userId: doctor.userId,
+          firstname: doctor.firstname,
+          lastname: doctor.lastname,
+          email: doctor.email,
+          phoneNumber: doctor.phoneNumber,
+          website: doctor.website,
+          address: doctor.address,
+          specialization: doctor.specialization,
+          experience: doctor.experience,
+          feePerConsultation: doctor.feePerConsultation,
+          calEventypeLink: doctor.calEventypeLink,
+          apikey: doctor.apikey,
+          status: doctor.status,
+        },
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: "Error getting in the backend", success: false, error });
+  }
 });
+
+//Getting All Doctors
+router.get("/doctors", async(req, res) => {
+  try {
+    const doctors = await Doctor.find({});
+
+    res.status(200).send({
+      message: "All doctors retrieved successfully",
+      success: true,
+      data: doctors.map((doctor) => ({
+        _id: doctor._id,
+        firstname: doctor.firstname,
+        lastname: doctor.lastname,
+        email: doctor.email,
+        phoneNumber: doctor.phoneNumber,
+        website: doctor.website,
+        address: doctor.address,
+        specialization: doctor.specialization,
+        experience: doctor.experience,
+        feePerConsultation: doctor.feePerConsultation,
+        calEventypeLink: doctor.calEventypeLink,
+        apikey: doctor.apikey,
+        status: doctor.status,
+        seenNotifications: doctor.seenNotifications || [],
+        unseenNotifications: doctor.unseenNotifications || [],
+        isdoctor: doctor.isdoctor || false,
+        isadmin: doctor.isadmin || false,
+      })),
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: "Error getting doctors info", success: false, error });
+  }
+});
+
+router.put("/approve-doctor/:id", authMiddleware, async (req, res) => {
+  const doctorId = req.params.id;
+  try {
+    const updatedDoctor = await Doctor.findByIdAndUpdate(
+      doctorId,
+      { status: "Approved" }, // Update status to Approved
+      { new: true }
+    );
+    if (!updatedDoctor) {
+      return res.status(404).send({ message: "Doctor not found", success: false });
+    }
+    res.status(200).send({ message: "Doctor approved successfully", success: true });
+  } catch (error) {
+    return res.status(500).send({ message: "Error approving doctor", success: false, error });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 router.get("/doctors/:id", (req, res) => {
   res.json({ message: "Capstone Get doctor by id request successful" });
