@@ -44,7 +44,7 @@ function Sidebar({ setActivePage }) {
   return (
     <div className="sticky top-0 h-screen">
       <div className="flex justify-center items-center h-screen w-72">
-        <div className=" flex flex-col rounded-2xl bg-[#37BFC4] h-[96%] w-64 font-poppins">
+        <div className=" flex flex-col rounded-2xl bg-[#267c7e] h-[96%] w-64 font-poppins">
           <div className="flex flex-col items-center">
             <div className="flex flex-row items-center pt-8">
               <div>
@@ -56,28 +56,22 @@ function Sidebar({ setActivePage }) {
             </div>
 
             <hr className="border-t-2 border-gray-300" />
-            {data.role ? (
-              <div className="text-base text-white font-light">
-                Role : {data.role}
-              </div>
-            ) : (
-              <div className="text-base text-white font-light">
-                Role : Admin
-              </div>
-            )}
+            <div className="text-base text-white font-light">
+              Role : {data.role ? data.role : "Admin"}
+            </div>
           </div>
 
           {data.isadmin ? (
             <div className="ml-2 mt-10 mr-2">
               <Link
-                to="/Allusers"
+                to="/AllPatients"
                 data={data}
-                onClick={() => setActivePage("AdminUsers")}
+                onClick={() => setActivePage("adminPatients")}
               >
                 <div className=" mt-2 flex p-2 hover:border rounded-lg hover:border-white">
                   <div className="flex flex-row items-center justify-center cursor-pointer">
-                    <img src={users} alt="Schedule" className="h-6 mr-2" />
-                    <p className="text-white ml-2">Users</p>
+                    <img src={users} alt="Users" className="h-6 mr-2" />
+                    <p className="text-white ml-2">Patients</p>
                   </div>
                 </div>
               </Link>
@@ -85,11 +79,11 @@ function Sidebar({ setActivePage }) {
               <Link
                 to="/Alldoctors"
                 data={data}
-                onClick={() => setActivePage("AdminDoctors")}
+                onClick={() => setActivePage("adminDoctors")}
               >
                 <div className="mt-2 flex p-2 hover:border rounded-lg hover:border-white">
                   <div className="flex flex-row items-center cursor-pointer">
-                    <img src={doctors} alt="Doctor" className="h-6 mr-2" />
+                    <img src={doctors} alt="Doctors" className="h-6 mr-2" />
                     <p className="text-white ml-2">Doctors</p>
                   </div>
                 </div>
@@ -98,86 +92,122 @@ function Sidebar({ setActivePage }) {
               <Link
                 to="/Allconsult"
                 data={data}
-                onClick={() => setActivePage("AdminConsult")}
+                onClick={() => setActivePage("adminConsult")}
               >
                 <div className="mt-2 flex p-2 hover:border rounded-lg hover:border-white">
                   <div className="flex flex-row items-center cursor-pointer">
-                    <img src={consult} alt="Doctor" className="h-6 mr-2" />
+                    <img
+                      src={consult}
+                      alt="Consultations"
+                      className="h-6 mr-2"
+                    />
                     <p className="text-white ml-2">Consultations</p>
                   </div>
                 </div>
               </Link>
             </div>
-          ) : data.isdoctor ? (
-            <div className="ml-2 mt-10 mr-2">
-              <div className=" mt-2 flex p-2 hover:border  rounded-lg hover:border-white">
-                <div className="flex flex-row items-center justify-center cursor-pointer">
-                  <img src={users} alt="Schedule" className="h-6 mr-2" />
-                  <p className="text-white ml-2">My Consultations</p>
-                </div>
-              </div>
-
-              <div className="mt-2 flex p-2 hover:border rounded-lg hover:border-white">
-                <div className="flex flex-row items-center cursor-pointer">
-                  <img src={consult} alt="Doctor" className="h-6 mr-2" />
-                  <p className="text-white ml-2">Attended Patients</p>
-                </div>
-              </div>
-
-              <div className="mt-2 flex p-2 hover:border  rounded-lg hover:border-white">
-                <div className="flex flex-row items-center cursor-pointer">
-                  <img src={doctors} alt="Doctor" className="h-6 mr-2" />
-                  <p className="text-white ml-2">Personal Profile</p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="ml-4 mt-10 mr-2">
-              <div className=" mt-2 flex p-2 hover:border rounded-lg hover:border-white">
-                <div className="flex flex-row items-center justify-center cursor-pointer">
-                  <img src={appoint} alt="Schedule" className="h-6 mr-2 " />
-                  <p className="text-white ml-2">My Appointments</p>
-                </div>
-              </div>
-
-              <div className="mt-2 flex p-2 hover:border rounded-lg hover:border-white">
-                <div className="flex flex-row items-center cursor-pointer">
-                  <img src={consult} alt="Doctor" className="h-6 mr-2" />
-                  <p className="text-white ml-2">Book a Consultation</p>
-                </div>
-              </div>
-
+          ) : data.role === "Doctor" ? (
+            <div className="ml-4 mt-10 mr-2 text-lg ">
               <Link
-                to="/PersonalProfile"
+                to="/doctorConsultations"
                 data={data}
-                onClick={() => setActivePage("PersonalProfile")}
+                onClick={() => setActivePage("doctorConsultations")}
               >
-                <div className="mt-2 flex p-2 hover:border  rounded-lg hover:border-white">
-                  <div className="flex flex-row items-center cursor-pointer">
-                    <img src={users} alt="Doctor" className="h-6 mr-2" />
-                    <p className="text-white ml-2">Personal Profile</p>
+                <div className="mt-2 flex p-2 hover:border rounded-lg hover:border-white">
+                  <div className="flex flex-row items-center justify-center cursor-pointer">
+                    <img
+                      src={users}
+                      alt="My Consultations"
+                      className="h-6 mr-2"
+                    />
+                    <p className="text-white ml-2">My Consultations</p>
                   </div>
                 </div>
               </Link>
 
-              {/* 
+              <Link to="/attendedPatients"
+              data={data}
+              onClick={()=> setActivePage("attendedPatients")}>
+              <div className="mt-2 flex p-2 hover:border rounded-lg hover:border-white">
+                <div className="flex flex-row items-center cursor-pointer">
+                  <img
+                    src={consult}
+                    alt="Attended Patients"
+                    className="h-6 mr-2"
+                  />
+                  <p className="text-white ml-2">Attended Patients</p>
+                </div>
+              </div>
+              </Link>
+
               <Link
-                to="/ApplyDoc"
+                to="/PersonalProfile"
                 data={data}
-                onClick={() => setActivePage("ApplyDoctor")}
+                onClick={() => setActivePage("personalProfile")}
               >
-                <div className="mt-2 flex p-2 hover:border  rounded-lg hover:border-white">
+                <div className="mt-2 flex p-2 hover:border rounded-lg hover:border-white">
                   <div className="flex flex-row items-center cursor-pointer">
-                    <img src={doctors} alt="Doctor" className="h-6 mr-2" />
-                    <p className="text-white ml-2">Apply as a doctor</p>
+                    <img
+                      src={users}
+                      alt="Personal Profile"
+                      className="h-6 mr-2"
+                    />
+                    <p className="text-white ml-2">Personal Profile</p>
                   </div>
                 </div>
-              </Link> */}
+              </Link>
             </div>
-          )}
+          ) : data.role === "Patient" ? (
+            <div className="ml-4 mt-10 mr-2">
+              <Link to="/PatientAppointments"
+              onClick={()=>setActivePage("patientAppointments")}>
+              <div className="mt-2 flex p-2 hover:border rounded-lg hover:border-white">
+                <div className="flex flex-row items-center justify-center cursor-pointer">
+                  <img
+                    src={appoint}
+                    alt="My Appointments"
+                    className="h-6 mr-2"
+                  />
+                  <p className="text-white ml-2">My Appointments</p>
+                </div>
+              </div>
+              </Link>
+
+              <Link to="/consult" onClick={()=> setActivePage("consult")}>
+              <div className="mt-2 flex p-2 hover:border rounded-lg hover:border-white">
+                <div className="flex flex-row items-center cursor-pointer">
+                  <img
+                    src={consult}
+                    alt="Book a Consultation"
+                    className="h-6 mr-2"
+                  />
+                  <p className="text-white ml-2">Book a Consultation</p>
+                </div>
+              </div>
+              </Link>
+
+
+              <Link
+                to="/PersonalProfile"
+                data={data}
+                onClick={() => setActivePage("personalProfile")}
+              >
+                <div className="mt-2 flex p-2 hover:border rounded-lg hover:border-white">
+                  <div className="flex flex-row items-center cursor-pointer">
+                    <img
+                      src={users}
+                      alt="Personal Profile"
+                      className="h-6 mr-2"
+                    />
+                    <p className="text-white ml-2">Personal Profile</p>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          ) : null}
 
           <div className="absolute bottom-0 left-16 right-16 p-4">
-            <div className=" w-max pb-2">
+            <div className="w-max pb-2">
               <div className="flex flex-row items-center justify-center cursor-pointer">
                 <div className="flex my-4">
                   <button onClick={loggingOut} className="flex">

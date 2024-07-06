@@ -3,15 +3,18 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { ShowLoading, HideLoading } from "../../../Redux/LoaderReducer";
+import { ShowLoading, HideLoading } from "../../Redux/LoaderReducer";
 import axios from "axios";
 import toast from "react-hot-toast";
+import cookie from "js-cookie"
 
 function PatientDetails() {
   const dispatch = useDispatch();
   const { userData: data } = useSelector((state) => state.userData);
   const userId = data._id;
-  const [submitted, setSubmitted] = useState(localStorage.getItem("submitted") || false);
+  const [submitted, setSubmitted] = useState(
+    localStorage.getItem("submitted") || false
+  );
   const [patientData, setPatientData] = useState({});
 
   const {
@@ -28,7 +31,7 @@ function PatientDetails() {
         { ...formData, userId },
         {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
+            Authorization: "Bearer " + cookie.get("token"),
           },
         }
       );
@@ -36,7 +39,7 @@ function PatientDetails() {
       if (response.data.success) {
         toast.success(response.data.message);
         setSubmitted(localStorage.setItem("submitted", true));
-        window.location.reload()
+        window.location.reload();
       } else {
         toast.error(response.data.message);
       }
@@ -56,7 +59,7 @@ function PatientDetails() {
           "http://localhost:4000/get-patient-details",
           {
             headers: {
-              Authorization: "Bearer " + localStorage.getItem("token"),
+              Authorization: "Bearer " + cookie.get("token"),
             },
             params: { userId },
           }
@@ -84,30 +87,33 @@ function PatientDetails() {
     <div>
       {submitted ? (
         <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-        <div className="p-4 bg-gray-800 text-white">
-          <h2 className="text-xl font-semibold">Patient Details</h2>
+          <div className="p-4 bg-[#267c7e] text-white">
+            <h2 className="text-xl font-semibold font-poppins">Healio Patient ID</h2>
+          </div>
+          <div className="p-4 font-poppins">
+            <div className="mb-4">
+              <span className="font-bold">Full Name:</span>{" "}
+              {patientData.fullname}
+            </div>
+            <div className="mb-4">
+              <span className="font-bold">Date of Birth:</span>{" "}
+              {patientData.dob}
+            </div>
+            <div className="mb-4">
+              <span className="font-bold">Gender:</span> {patientData.gender}
+            </div>
+            <div className="mb-4">
+              <span className="font-bold">Email Id:</span> {patientData.email}
+            </div>
+            <div className="mb-4">
+              <span className="font-bold">Mobile:</span>{" "}
+              {patientData.phoneNumber}
+            </div>
+            <div className="mb-4">
+              <span className="font-bold">Address:</span> {patientData.address}
+            </div>
+          </div>
         </div>
-        <div className="p-4">
-          <div className="mb-4">
-            <span className="font-bold">Full Name:</span> {patientData.fullname}
-          </div>
-          <div className="mb-4">
-            <span className="font-bold">Date of Birth:</span> {patientData.dob}
-          </div>
-          <div className="mb-4">
-            <span className="font-bold">Gender:</span> {patientData.gender}
-          </div>
-          <div className="mb-4">
-            <span className="font-bold">Email Id:</span> {patientData.email}
-          </div>
-          <div className="mb-4">
-            <span className="font-bold">Mobile:</span> {patientData.phoneNumber}
-          </div>
-          <div className="mb-4">
-            <span className="font-bold">Address:</span> {patientData.address}
-          </div>
-        </div>
-      </div>
       ) : (
         <form
           className="flex flex-col gap-5 font-poppins"

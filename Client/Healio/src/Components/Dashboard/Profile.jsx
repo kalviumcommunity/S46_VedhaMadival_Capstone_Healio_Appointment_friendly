@@ -8,11 +8,17 @@ import { SetAuthenticated } from "../../Redux/AuthenticateReducer";
 import { HideLoading, ShowLoading } from "../../Redux/LoaderReducer";
 import toast from "react-hot-toast";
 import AdminConsult from "../Admin/AdminConsult";
-import ApplyDoctor from "./ApplyDoctor";
+import ApplyDoctor from "../Doctor/ApplyDoctor";
 import { setData } from "../../Redux/UserInfoReducer";
 import AdminUsers from "../Admin/AdminPatients";
-import AdminDoctors from "./DashboardContent/AdminDoctors";
+import AdminDoctors from "../Admin/AdminDoctors";
 import PersonalProfile from "./PersonalProfile";
+import cookie from "js-cookie";
+import DoctorConsultations from "../Doctor/DoctorConsultations";
+import AttendedPatients from "../Doctor/AttendedPatients";
+import PatientAppointments from "../Patient/PatientAppointments";
+import ConsultHere from "../HomePage/ConsultHere";
+import AdminPatients from "../Admin/AdminPatients";
 
 function Profile() {
   // const [data, setdata] = useState({});
@@ -25,7 +31,7 @@ function Profile() {
   );
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = cookie.get("token");
     if (token) {
       dispatch(SetAuthenticated());
     }
@@ -44,7 +50,7 @@ function Profile() {
             "http://localhost:4000/user-info-by-id",
             {
               headers: {
-                Authorization: "Bearer " + localStorage.getItem("token"),
+                Authorization: "Bearer " + cookie.get("token"),
               },
             }
           );
@@ -74,11 +80,15 @@ function Profile() {
 
         <div className="w-full">
           <Header />
-          {activePage === "AdminUsers" && <AdminUsers />}
-          {activePage === "AdminDoctors" && <AdminDoctors />}
-          {activePage === "AdminConsult" && <AdminConsult />}
-          {activePage === "ApplyDoctor" && <ApplyDoctor />}
-          {activePage === "PersonalProfile" && <PersonalProfile />}
+          {activePage === "adminPatients" && <AdminPatients />}
+          {activePage === "adminDoctors" && <AdminDoctors />}
+          {activePage === "adminConsult" && <AdminConsult />}
+          {activePage === "applyDoctor" && <ApplyDoctor />}
+          {activePage === "personalProfile" && <PersonalProfile />}
+          {activePage === "doctorConsultations" && <DoctorConsultations />}
+          {activePage === "attendedPatients" && <AttendedPatients />}
+          {activePage === "patientAppointments" && <PatientAppointments />}
+          {activePage === "consult" && <ConsultHere />}
         </div>
       </div>
     </>

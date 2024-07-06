@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { SetAuthenticated } from "../Redux/AuthenticateReducer";
+import { SetAuthenticated } from "../../Redux/AuthenticateReducer";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import user from "../Assets/user-account.png";
+import user from "../../Assets/user-account.png";
 import cookie from "js-cookie";
 
 function Header() {

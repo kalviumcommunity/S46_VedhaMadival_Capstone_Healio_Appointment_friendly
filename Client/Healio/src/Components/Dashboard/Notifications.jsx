@@ -18,28 +18,6 @@ function Notifications() {
     }
   }, [dispatch]);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      const getData = async () => {
-        try {
-          const response = await axios.get(
-            "http://localhost:4000/user-info-by-id",
-            {
-              headers: {
-                Authorization: "Bearer " + localStorage.getItem("token"),
-              },
-            }
-          );
-          setData(response.data.data);
-          console.log(data);
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      getData();
-    }
-  }, [isAuthenticated]);
-
   return (
     <div className="mx-auto max-w-screen-xl px-4 lg:px-0 font-poppins">
       <div className="flex flex-col py-4">
@@ -55,13 +33,21 @@ function Notifications() {
         </div>
       </div>
 
-      <div>
-        <h1 className="font-poppins font-bold text-4xl my-6 text-left">
+      <div className="flex flex-col justify-center font-poppins">
+        <div>
+        <h1 className="font-poppins font-bold text-2xl my-6 text-left">
           Notifications
         </h1>
+        </div>
+
+        <div>
+          {" "}
+          <p>Still Working on this</p>
+          <h1> SEE YOU SOON </h1>
+        </div>
       </div>
 
-      <div>
+      {/* <div>
         <Tabs
           aria-label="tabs with underline"
           style="underline"
@@ -99,7 +85,7 @@ function Notifications() {
             </div>
           </Tabs.Item>
         </Tabs>
-      </div>
+      </div> */}
     </div>
   );
 }

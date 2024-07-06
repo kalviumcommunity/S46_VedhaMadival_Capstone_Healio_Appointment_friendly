@@ -2,18 +2,29 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import img from "../Assets/img.png";
-import doc from "../Assets/Finddoc.png";
-import arrow from "../Assets/right-arrow.png";
-import book from "../Assets/Bookdoc.png";
-import con from "../Assets/Consultdoc.png";
-import care from "../Assets/care.png";
-import best from "../Assets/best.png";
+import img from "../../Assets/img.png";
+import doc from "../../Assets/Finddoc.png";
+import arrow from "../../Assets/right-arrow.png";
+import book from "../../Assets/Bookdoc.png";
+import con from "../../Assets/Consultdoc.png";
+import care from "../../Assets/care.png";
+import best from "../../Assets/best.png";
 import Footer from "./Footer";
 import axios from "axios";
 import Header from "./Header";
+import { SetAuthenticated } from "../../Redux/AuthenticateReducer";
+import { Link } from "react-router-dom";
 
 function Home() {
+  const { isAuthenticated } = useSelector((state) => state.isAuthenticated);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      dispatch(SetAuthenticated());
+    }
+  }, [dispatch]);
   return (
     <>
       <div className="mx-auto max-w-screen-xl px-4 lg:px-0">
@@ -42,9 +53,21 @@ function Home() {
               />
             </div>
 
-            <button className="bg-[#37BFC4] text-white font-bold py-2 px-4 mt-8 rounded text-center w-full lg:w-80 h-12 font-poppins hover:bg-[#ff7974]">
-              Book Your Appointment
-            </button>
+            {isAuthenticated ? (
+              <Link to="/Consult">
+                {" "}
+                <button className="bg-[#37BFC4] text-white font-bold py-2 px-4 mt-8 rounded text-center w-full lg:w-80 h-12 font-poppins hover:bg-[#ff7974]">
+                  Book Your Appointment
+                </button>
+              </Link>
+            ) : (
+              <Link to="/Login">
+                {" "}
+                <button className="bg-[#37BFC4] text-white font-bold py-2 px-4 mt-8 rounded text-center w-full lg:w-80 h-12 font-poppins hover:bg-[#ff7974]">
+                  Book Your Appointment
+                </button>
+              </Link>
+            )}
           </div>
 
           <div className=" hidden lg:flex justify-center ">
