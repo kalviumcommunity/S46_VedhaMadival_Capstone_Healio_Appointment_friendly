@@ -36,7 +36,7 @@ function Login() {
       if (response.data.success) {
         toast.success(response.data.message);
         toast.success("Redirecting to the Home Page");
-        localStorage.setItem("token", response.data.data);
+        // localStorage.setItem("token", response.data.data);
         cookie.set("token", response.data.data);
         navigateto("/");
       } else {

@@ -4,9 +4,9 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { HideLoading, ShowLoading } from "../Redux/LoaderReducer";
-import { setDoctorData } from "../Redux/DoctorInfoReducer";
-
+import { HideLoading, ShowLoading } from "../../Redux/LoaderReducer";
+import { setDoctorData } from "../../Redux/DoctorInfoReducer";
+import cookie from "js-cookie"
 
 function Book() {
   const { doctorId } = useParams();
@@ -27,7 +27,7 @@ function Book() {
           `http://localhost:4000/get-doctor-by-id/${doctorId}`,
           {
             headers: {
-              Authorization: "Bearer " + localStorage.getItem("token"),
+              Authorization: "Bearer " + cookie.get("token"),
             },
           }
         );
@@ -62,7 +62,7 @@ function Book() {
                 </div>
                 <div className="py-2">
                   <strong>Experienced for: </strong>
-                  {doctorData.experience}
+                  {doctorData.experience} year
                 </div>
                 <div className="py-2 mb-10">
                   <strong>Fees Taken Per Consultation: </strong>
@@ -74,7 +74,7 @@ function Book() {
                       <div className="flex flex-row items-center justify-center">
                          {/* {console.log(doctorData.calEventypeLink)} */}
                         <a
-                          href={`https://cal.com/${doctorData.calEventypeLink}`}
+                          href={`${doctorData.calEventypeLink}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >

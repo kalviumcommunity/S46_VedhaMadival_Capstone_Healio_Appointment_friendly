@@ -6,7 +6,7 @@ import {
   faInstagram,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import logo from "../Assets/logo.png";
+import logo from "../../Assets/logo.png";
 
 const Footer = () => {
   return (

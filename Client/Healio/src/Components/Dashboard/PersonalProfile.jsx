@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import PatientDetails from "./PatientDetails";
-import ApplyDoctor from "./ApplyDoctor";
+import PatientDetails from "../Patient/PatientDetails";
+import ApplyDoctor from "../Doctor/ApplyDoctor";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { HideLoading, ShowLoading } from "../../../Redux/LoaderReducer";
+import { HideLoading, ShowLoading } from "../../Redux/LoaderReducer";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 

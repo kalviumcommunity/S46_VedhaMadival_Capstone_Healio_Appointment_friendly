@@ -4,35 +4,35 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { HideLoading, ShowLoading } from "../../../Redux/LoaderReducer";
+import { HideLoading, ShowLoading } from "../../Redux/LoaderReducer";
 import axios from "axios";
 import toast from "react-hot-toast";
-
-function ApplyDoctor({ datas }) {
+import cookie from "js-cookie";
+function ApplyDoctor() {
   const dispatch = useDispatch();
+  const [doctorData, setDoctorData] = useState({});
   const { userData: data } = useSelector((state) => state.userData);
   const userId = data._id;
 
   const [submitted, setSubmitted] = useState(
     localStorage.getItem("Submitted") || false
   );
-  const [doctorData, setDoctorData] = useState({});
-
+ 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (formData) => {
     try {
       dispatch(ShowLoading());
       const response = await axios.post(
         "http://localhost:4000/doctor-details",
-        { ...data, userId },
+        { ...formData, userId },
         {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
+            Authorization: "Bearer " + cookie.get("token"),
           },
         }
       );
@@ -40,11 +40,12 @@ function ApplyDoctor({ datas }) {
       if (response.data.exists) {
         toast.error("Doctor with same Email ID already exists!");
       } else {
-        setSubmitted(localStorage.setItem("Submitted", true));
+        localStorage.setItem("Submitted", true);
+        setSubmitted(true);
         toast("You will be notified once your request is approved");
         if (response.data.success) {
           toast.success(response.data.message);
-          window.location.reload()
+          window.location.reload();
         } else {
           toast.error(response.data.message);
         }
@@ -65,7 +66,7 @@ function ApplyDoctor({ datas }) {
           "http://localhost:4000/get-doctor-details",
           {
             headers: {
-              Authorization: "Bearer " + localStorage.getItem("token"),
+              Authorization: "Bearer " + cookie.get("token"),
             },
             params: { userId },
           }
@@ -74,7 +75,6 @@ function ApplyDoctor({ datas }) {
         if (response.data.success) {
           setDoctorData(response.data.data);
           setSubmitted(true);
-          toast.success(response.data.message);
         } else {
           setSubmitted(false);
           toast.error(response.data.message);
@@ -94,56 +94,55 @@ function ApplyDoctor({ datas }) {
         <div className="font-poppins text-xl h-full">
           {submitted ? (
             <div className="mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-            <div className="p-4 bg-gray-800 text-white">
-              <h2 className="font-bold text-2xl">Doctor Details</h2>
+              <div className="p-4 bg-[#267c7e] text-white">
+                <h2 className="font-bold text-2xl">Doctor Details</h2>
+              </div>
+              <div className="p-2">
+                <p className="text-gray-800 p-2 text-base">
+                  <strong>First Name :</strong> {doctorData.firstname}
+                </p>
+                <p className="text-gray-800 p-2 text-base">
+                  <strong>Last Name :</strong> {doctorData.lastname}
+                </p>
+                <p className="text-gray-800 p-2 text-base">
+                  <strong>Email :</strong> {doctorData.email}
+                </p>
+                <p className="text-gray-800 p-2 text-base">
+                  <strong>Phone Number :</strong> {doctorData.phoneNumber}
+                </p>
+                <p className="text-gray-800 p-2 text-base">
+                  <strong>Website :</strong> {doctorData.website}
+                </p>
+                <p className="text-gray-800 p-2 text-base">
+                  <strong>Address :</strong> {doctorData.address}
+                </p>
+                <p className="text-gray-800 p-2 text-base">
+                  <strong>Specialization :</strong> {doctorData.specialization}
+                </p>
+                <p className="text-gray-800 p-2 text-base">
+                  <strong>Experience :</strong> {doctorData.experience} years
+                </p>
+                <p className="text-gray-800 p-2 text-base">
+                  <strong>Fee per Consultation :</strong> Rs.
+                  {doctorData.feePerConsultation}
+                </p>
+                <p className="text-gray-800 p-2 text-base">
+                  <strong>Cal.com EventType Link :</strong>{" "}
+                  {doctorData.calEventypeLink}
+                </p>
+                <p className="text-gray-800 p-2 text-base">
+                  <div className="flex">
+                    <strong>Approval Status :</strong>
+                    <p className="text-red-500 ml-2">{doctorData.status}</p>
+                  </div>
+                </p>
+              </div>
             </div>
-          
-            <div className="p-2">
-              <p className="text-gray-800  p-2 text-base">
-                <strong>First Name :</strong> {doctorData.firstname}
-              </p>
-              <p className="text-gray-800 p-2 text-base">
-                <strong>Last Name :</strong> {doctorData.lastname}
-              </p>
-              <p className="text-gray-800 p-2 text-base">
-                <strong>Email :</strong> {doctorData.email}
-              </p>
-              <p className="text-gray-800 p-2 text-base">
-                <strong>Phone Number :</strong> {doctorData.phoneNumber}
-              </p>
-              <p className="text-gray-800 p-2 text-base">
-                <strong>Website :</strong> {doctorData.website}
-              </p>
-              <p className="text-gray-800 p-2 text-base">
-                <strong>Address :</strong> {doctorData.address}
-              </p>
-              <p className="text-gray-800 p-2 text-base">
-                <strong>Specialization :</strong> {doctorData.specialization}
-              </p>
-              <p className="text-gray-800 p-2 text-base">
-                <strong>Experience :</strong> {doctorData.experience} years
-              </p>
-              <p className="text-gray-800 p-2 text-base">
-                <strong>Fee per Consultation :</strong> Rs.{doctorData.feePerConsultation}
-              </p>
-              <p className="text-gray-800 p-2 text-base">
-                <strong>Cal.com EventType Link :</strong> {doctorData.calEventypeLink}
-              </p>
-              <p className="text-gray-800 p-2 text-base">
-                <div className="flex">
-                <strong>Approval Status :</strong> <p className="text-red-500 ml-2">{doctorData.status}</p>
-                </div>
-              
-              </p>
-            </div>
-          </div>
-          
           ) : (
             <div>
               <h2 className="font-bold text-xl mb-5 text-slate-500 text-left">
                 Personal Information
               </h2>
-
               <form
                 className="flex flex-col gap-5 font-poppins"
                 onSubmit={handleSubmit(onSubmit)}
@@ -163,13 +162,13 @@ function ApplyDoctor({ datas }) {
                       required: "FirstName is required",
                       minLength: {
                         value: 3,
-                        message: "FirstName must be atleast 3 characters long.",
+                        message:
+                          "FirstName must be at least 3 characters long.",
                       },
                     })}
                   />
                   {errors.firstname && <p>{errors.firstname.message}</p>}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Lastname :
@@ -185,13 +184,12 @@ function ApplyDoctor({ datas }) {
                       required: "LastName is required",
                       minLength: {
                         value: 3,
-                        message: "LastName must be atleast 3 characters long.",
+                        message: "LastName must be at least 3 characters long.",
                       },
                     })}
                   />
                   {errors.lastname && <p>{errors.lastname.message}</p>}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Email :
@@ -201,7 +199,7 @@ function ApplyDoctor({ datas }) {
                     id="email"
                     name="email"
                     placeholder="Email"
-                    className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    className="h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
                     defaultValue={doctorData.email || ""}
                     {...register("email", {
                       required: "Email is required",
@@ -213,17 +211,16 @@ function ApplyDoctor({ datas }) {
                   />
                   {errors.email && <p>{errors.email.message}</p>}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Phone Number :
                   </label>
                   <input
                     type="text"
-                    id="phone"
-                    name="phone"
+                    id="phoneNumber"
+                    name="phoneNumber"
                     placeholder="Phone Number"
-                    className=" h-10 p-2  border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    className="h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
                     defaultValue={doctorData.phoneNumber || ""}
                     {...register("phoneNumber", {
                       required: "Phone number is required",
@@ -235,7 +232,6 @@ function ApplyDoctor({ datas }) {
                   />
                   {errors.phoneNumber && <p>{errors.phoneNumber.message}</p>}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Website :
@@ -245,7 +241,7 @@ function ApplyDoctor({ datas }) {
                     id="website"
                     name="website"
                     placeholder="Website"
-                    className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    className="h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
                     defaultValue={doctorData.website || ""}
                     {...register("website", {
                       required: "Website is required",
@@ -253,7 +249,6 @@ function ApplyDoctor({ datas }) {
                   />
                   {errors.website && <p>{errors.website.message}</p>}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Address :
@@ -263,7 +258,7 @@ function ApplyDoctor({ datas }) {
                     id="address"
                     name="address"
                     placeholder="Address"
-                    className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    className="h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
                     defaultValue={doctorData.address || ""}
                     {...register("address", {
                       required: "Address is required",
@@ -271,13 +266,10 @@ function ApplyDoctor({ datas }) {
                   />
                   {errors.address && <p>{errors.address.message}</p>}
                 </div>
-
                 <hr className="my-6" />
-
-                <h2 className="font-bold text-xl mb-5 text-slate-500  text-left">
+                <h2 className="font-bold text-xl mb-5 text-slate-500 text-left">
                   Professional Information
                 </h2>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Specialization :
@@ -285,8 +277,9 @@ function ApplyDoctor({ datas }) {
                   <input
                     type="text"
                     id="specialization"
+                    name="specialization"
                     placeholder="Specialization"
-                    className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    className="h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
                     defaultValue={doctorData.specialization || ""}
                     {...register("specialization", {
                       required: "Specialization is required",
@@ -296,7 +289,6 @@ function ApplyDoctor({ datas }) {
                     <p>{errors.specialization.message}</p>
                   )}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Experience :
@@ -304,8 +296,9 @@ function ApplyDoctor({ datas }) {
                   <input
                     type="text"
                     id="experience"
+                    name="experience"
                     placeholder="Experience"
-                    className="  h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    className="h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
                     defaultValue={doctorData.experience || ""}
                     {...register("experience", {
                       required: "Experience is required",
@@ -313,16 +306,16 @@ function ApplyDoctor({ datas }) {
                   />
                   {errors.experience && <p>{errors.experience.message}</p>}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Fee per Consultation* :
                   </label>
                   <input
                     type="text"
-                    id="fee"
+                    id="feePerConsultation"
+                    name="feePerConsultation"
                     placeholder="Fee"
-                    className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    className="h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
                     defaultValue={doctorData.feePerConsultation || ""}
                     {...register("feePerConsultation", {
                       required: "Fee is required",
@@ -332,22 +325,20 @@ function ApplyDoctor({ datas }) {
                     <p>{errors.feePerConsultation.message}</p>
                   )}
                 </div>
-
                 <hr className="my-6" />
-
-                <h2 className="font-bold text-xl mb-5 text-slate-500  text-left">
+                <h2 className="font-bold text-xl mb-5 text-slate-500 text-left">
                   Schedule Booking Information
                 </h2>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Cal.com EventType Link :
                   </label>
                   <input
                     type="text"
-                    id="eventTypeLink"
+                    id="calEventypeLink"
+                    name="calEventypeLink"
                     placeholder="EventTypeLink"
-                    className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    className="h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
                     defaultValue={doctorData.calEventypeLink || ""}
                     {...register("calEventypeLink", {
                       required: "EventTypeLink is required",
@@ -357,24 +348,23 @@ function ApplyDoctor({ datas }) {
                     <p>{errors.calEventypeLink.message}</p>
                   )}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Your Cal.com API KEY :
                   </label>
                   <input
                     type="text"
-                    id="api_key"
+                    id="apikey"
+                    name="apikey"
                     placeholder="Api_key"
-                    className=" h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
+                    className="h-10 p-2 border border-gray-300 focus:border-[#267c7e] rounded-md shadow-sm focus:outline-none focus:shadow-outline block w-full sm:text-sm"
                     defaultValue={doctorData.apikey || ""}
                     {...register("apikey", {
-                      required: "EventTypeLink is required",
+                      required: "API key is required",
                     })}
                   />
                   {errors.apikey && <p>{errors.apikey.message}</p>}
                 </div>
-
                 <div>
                   <button
                     type="submit"
@@ -384,7 +374,6 @@ function ApplyDoctor({ datas }) {
                   </button>
                 </div>
               </form>
-
               <h2 className="font-light text-xs text-center">
                 Wait for approval from &copy; Healio+ Department
               </h2>

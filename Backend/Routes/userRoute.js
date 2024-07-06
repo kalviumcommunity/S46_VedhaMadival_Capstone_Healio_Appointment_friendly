@@ -3,9 +3,10 @@ const router = express.Router();
 const User = require("../Models/UserModel");
 const Patient = require("../Models/PatientModel");
 const Doctor = require("../Models/DoctorModel");
+const webhook = require("../Models/WebhookModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const authMiddleware = require("../Middlewares/authMiddleware")
+const authMiddleware = require("../Middlewares/authMiddleware");
 
 //Write Performed: Create a new user
 router.post("/register", async (req, res) => {
@@ -25,7 +26,7 @@ router.post("/register", async (req, res) => {
     req.body.password = hashedPassword;
     const newUser = new User(req.body);
     await newUser.save();
-    
+
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
@@ -104,7 +105,6 @@ router.get("/user-info-by-id", authMiddleware, async (req, res) => {
   }
 });
 
-
 // Read Performed: Getting all users
 router.get("/user-info-all", async (req, res) => {
   try {
@@ -116,6 +116,7 @@ router.get("/user-info-all", async (req, res) => {
       data: users.map((user) => ({
         name: user.name,
         email: user.email,
+        role: user.role,
         isdoctor: user.isdoctor || false,
         isadmin: user.isadmin || false,
         seenNotifications: user.seenNotifications || [],
@@ -150,25 +151,27 @@ router.post("/patient-details", authMiddleware, async (req, res) => {
 });
 
 //Getting Patient Personal Data by id
-router.get("/get-patient-details", authMiddleware,async (req, res) => {
+router.get("/get-patient-details", authMiddleware, async (req, res) => {
   try {
     const patient = await Patient.findOne({ userId: req.body.userId });
-    
+
     if (!patient) {
       return res.status(400).send({ message: "Patient not found" });
     }
-    
+
     return res
-    .status(200)
-    .send({ message: "Patient Details Fetched", success: true, data: patient });
+      .status(200)
+      .send({
+        message: "Patient Details Fetched",
+        success: true,
+        data: patient,
+      });
   } catch (error) {
     return res
       .status(500)
       .send({ message: "Error getting in the backend", success: false, error });
-    }
   }
-);
-
+});
 
 //Storing Doctor Details
 router.post("/doctor-details", authMiddleware, async (req, res) => {
@@ -224,18 +227,22 @@ router.get("/get-doctor-details", authMiddleware, async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Error fetching doctor details", success: false });
+    res
+      .status(500)
+      .send({ message: "Error fetching doctor details", success: false });
   }
 });
 
 //Getting Doctor Details of a single Doctor for Booking
-router.get("/get-doctor-by-id/:doctorId", async (req, res) => {
+router.get("/get-doctor-by-id/:doctorId", authMiddleware, async (req, res) => {
   try {
     const doctorId = req.params.doctorId;
     const doctor = await Doctor.findById(doctorId);
 
     if (!doctor) {
-      return res.status(404).send({ message: "Doctor does not exist", success: false });
+      return res
+        .status(404)
+        .send({ message: "Doctor does not exist", success: false });
     } else {
       res.status(200).send({
         message: "Doctor found",
@@ -260,12 +267,14 @@ router.get("/get-doctor-by-id/:doctorId", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    return res.status(500).send({ message: "Error getting in the backend", success: false, error });
+    return res
+      .status(500)
+      .send({ message: "Error getting in the backend", success: false, error });
   }
 });
 
 //Getting All Doctors
-router.get("/doctors", async(req, res) => {
+router.get("/doctors", authMiddleware, async (req, res) => {
   try {
     const doctors = await Doctor.find({});
 
@@ -299,20 +308,55 @@ router.get("/doctors", async(req, res) => {
   }
 });
 
+//To Approve the Doctors
 router.put("/approve-doctor/:id", authMiddleware, async (req, res) => {
   const doctorId = req.params.id;
   try {
     const updatedDoctor = await Doctor.findByIdAndUpdate(
       doctorId,
-      { status: "Approved" }, // Update status to Approved
+      { status: "Approved" }, 
       { new: true }
     );
     if (!updatedDoctor) {
-      return res.status(404).send({ message: "Doctor not found", success: false });
+      return res
+        .status(404)
+        .send({ message: "Doctor not found", success: false });
     }
-    res.status(200).send({ message: "Doctor approved successfully", success: true });
+    res
+      .status(200)
+      .send({ message: "Doctor approved successfully", success: true });
   } catch (error) {
-    return res.status(500).send({ message: "Error approving doctor", success: false, error });
+    return res
+      .status(500)
+      .send({ message: "Error approving doctor", success: false, error });
+  }
+});
+
+// Getting Doctor Meeting Information
+router.get('/api/meetings/doctor/:email', authMiddleware, async (req, res) => {
+  const { email } = req.params;
+
+  let query = { 'payload.organizer.email': email };
+
+  try {
+    const meetings = await webhook.find(query).sort({ 'payload.startTime': 1 });
+    res.json(meetings);
+  } catch (error) {
+    console.error('Error fetching doctor meetings:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+//Getting Patient Appointment Information
+router.get('/api/meetings/patient/:email', authMiddleware, async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    const meetings = await webhook.find({ 'payload.attendees.0.email': email }).sort({ 'payload.startTime': 1 });
+    res.json(meetings);
+  } catch (error) {
+    console.error('Error fetching patient meetings:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
@@ -333,34 +377,6 @@ router.put("/approve-doctor/:id", authMiddleware, async (req, res) => {
 
 
 
-
-
-
-
-router.get("/doctors/:id", (req, res) => {
-  res.json({ message: "Capstone Get doctor by id request successful" });
-});
-
-router.get("/patients", (req, res) => {
-  res.json({ message: "Capstone Get all patients request successful" });
-});
-
-router.get("/patients/:id", (req, res) => {
-  res.json({ message: "Capstone Get patient by id request successful" });
-});
-
-//POST API USED
-router.post("/login", (req, res) => {
-  res.json({ message: "Created a new user" });
-});
-
-router.post("/new-doctor", (req, res) => {
-  res.json({ message: "Created a new doctor" });
-});
-
-router.post("/new-patient", (req, res) => {
-  res.json({ message: "Created a new patient" });
-});
 
 //PUT API USED
 router.put("/doctor-edit", (req, res) => {
