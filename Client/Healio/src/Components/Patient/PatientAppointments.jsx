@@ -159,13 +159,13 @@ function DoctorConsultations() {
                     {meeting.payload.title}
                   </p>
                   <p>
-                    <span className="font-bold"> Patient Name :</span>{" "}
-                    {meeting.payload.attendees[0].name}
+                    <span className="font-bold"> Doctor Name :</span>{" "}
+                    {meeting.payload.organizer.name}
                   </p>
                   <p>
                     <span className="font-bold">
                       {" "}
-                      Patient's Additional Note :
+                      Your Additional Note :
                     </span>{" "}
                     {meeting.payload.additionalNotes}
                   </p>

@@ -19,6 +19,7 @@ import DoctorConsultations from "./Components/Doctor/DoctorConsultations";
 import AttendedPatients from "./Components/Doctor/AttendedPatients";
 import PatientAppointments from "./Components/Patient/PatientAppointments";
 import AdminPatients from "./Components/Admin/AdminPatients";
+import Services from "./Components/HomePage/Services";
 
 function App() {
   const { loading } = useSelector((state) => state.loader);
@@ -40,6 +41,7 @@ function App() {
         <Route path="/Notifications" element={<Notifications />} />
         <Route path="/Consult" element={<ConsultHere />} />
         <Route path="/Booking/:doctorId" element={<Book />} />
+        <Route path="/Services" element={<Services/>}/>
         <Route
           path="/Allpatients"
           element={

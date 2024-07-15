@@ -72,7 +72,6 @@ function Book() {
                   <div>
                     {doctorData.calEventypeLink && (
                       <div className="flex flex-row items-center justify-center">
-                         {/* {console.log(doctorData.calEventypeLink)} */}
                         <a
                           href={`${doctorData.calEventypeLink}`}
                           target="_blank"
