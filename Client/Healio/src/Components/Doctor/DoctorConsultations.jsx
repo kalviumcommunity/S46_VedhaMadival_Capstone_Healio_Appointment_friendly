@@ -18,7 +18,7 @@ function DoctorConsultations() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/get-doctor-details",
+          "https://s46-vedhamadival-capstone-healio.onrender.com/get-doctor-details",
           {
             headers: {
               Authorization: "Bearer " + cookie.get("token"),
@@ -44,7 +44,7 @@ function DoctorConsultations() {
       try {
         dispatch(ShowLoading());
         const response = await axios.get(
-          `http://localhost:4000/api/meetings/doctor/${email}`,
+          `https://s46-vedhamadival-capstone-healio.onrender.com/api/meetings/doctor/${email}`,
           {
             headers: {
               Authorization: "Bearer " + cookie.get("token"),
@@ -83,12 +83,12 @@ function DoctorConsultations() {
         break;
       case "rescheduled":
         filtered = allMeetings.filter(
-          (meeting) => meeting.event === "BOOKING_RESCHEDULED"
+          (meeting) => (meeting.triggerEvent) === "BOOKING_RESCHEDULED"
         );
         break;
       case "cancelled":
         filtered = allMeetings.filter(
-          (meeting) => meeting.event === "BOOKING_CANCELLED"
+          (meeting) => (meeting.triggerEvent) === "BOOKING_CANCELLED"
         );
         break;
       default:

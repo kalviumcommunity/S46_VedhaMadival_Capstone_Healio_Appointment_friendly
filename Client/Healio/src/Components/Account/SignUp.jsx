@@ -29,7 +29,7 @@ function SignUp() {
       dispatch(ShowLoading());
 
       const response = await axios.post(
-        "http://localhost:4000/register",
+        "https://s46-vedhamadival-capstone-healio.onrender.com/register",
         values
       );
 
@@ -48,6 +48,7 @@ function SignUp() {
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
+      dispatch(HideLoading());
     }
   };
 

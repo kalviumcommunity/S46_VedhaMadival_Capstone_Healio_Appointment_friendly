@@ -24,7 +24,7 @@ function Book() {
       try {
         dispatch(ShowLoading());
         const response = await axios.get(
-          `http://localhost:4000/get-doctor-by-id/${doctorId}`,
+          `https://s46-vedhamadival-capstone-healio.onrender.com/get-doctor-by-id/${doctorId}`,
           {
             headers: {
               Authorization: "Bearer " + cookie.get("token"),

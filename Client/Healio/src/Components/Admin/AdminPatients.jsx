@@ -8,7 +8,7 @@ function AdminPatients() {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/user-info-all");
+        const response = await axios.get("https://s46-vedhamadival-capstone-healio.onrender.com/user-info-all");
         if (response.data.success) {
           // Filter users with role === "patient"
           const patientsData = response.data.data.filter(user => user.role === "Patient");

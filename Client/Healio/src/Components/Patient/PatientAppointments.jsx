@@ -18,7 +18,7 @@ function DoctorConsultations() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/get-patient-details', {
+        const response = await axios.get('https://s46-vedhamadival-capstone-healio.onrender.com/get-patient-details', {
           headers: {
             Authorization: 'Bearer ' + cookie.get('token'),
           },
@@ -41,7 +41,7 @@ function DoctorConsultations() {
       if (!email) return;
       try {
         dispatch(ShowLoading());
-        const response = await axios.get(`http://localhost:4000/api/meetings/patient/${email}`, {
+        const response = await axios.get(`https://s46-vedhamadival-capstone-healio.onrender.com/api/meetings/patient/${email}`, {
           headers: {
             Authorization: 'Bearer ' + cookie.get('token'),
           },

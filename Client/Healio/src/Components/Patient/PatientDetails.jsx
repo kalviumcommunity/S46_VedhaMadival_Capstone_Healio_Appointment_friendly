@@ -27,7 +27,7 @@ function PatientDetails() {
     try {
       dispatch(ShowLoading());
       const response = await axios.post(
-        "http://localhost:4000/patient-details",
+        "https://s46-vedhamadival-capstone-healio.onrender.com/patient-details",
         { ...formData, userId },
         {
           headers: {
@@ -56,7 +56,7 @@ function PatientDetails() {
       try {
         dispatch(ShowLoading());
         const response = await axios.get(
-          "http://localhost:4000/get-patient-details",
+          "https://s46-vedhamadival-capstone-healio.onrender.com/get-patient-details",
           {
             headers: {
               Authorization: "Bearer " + cookie.get("token"),
