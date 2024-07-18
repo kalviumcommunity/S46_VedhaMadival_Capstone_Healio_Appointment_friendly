@@ -16,7 +16,7 @@ function AttendedPatients() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/get-doctor-details",
+          "https://s46-vedhamadival-capstone-healio.onrender.com/get-doctor-details",
           {
             headers: {
               Authorization: "Bearer " + cookie.get("token"),
@@ -42,7 +42,7 @@ function AttendedPatients() {
       try {
         dispatch(ShowLoading());
         const response = await axios.get(
-          `http://localhost:4000/api/meetings/doctor/${email}`,
+          `https://s46-vedhamadival-capstone-healio.onrender.com/api/meetings/doctor/${email}`,
           {
             headers: {
               Authorization: "Bearer " + cookie.get("token"),

@@ -17,7 +17,7 @@ function AdminDoctors() {
     const fetchData = async () => {
       try {
         dispatch(ShowLoading());
-        const response = await axios.get("http://localhost:4000/doctors", {
+        const response = await axios.get("https://s46-vedhamadival-capstone-healio.onrender.com/doctors", {
           headers: {
             Authorization: "Bearer " + cookie.get("token"),
           },
@@ -50,7 +50,7 @@ function AdminDoctors() {
     try {
       dispatch(ShowLoading());
       const response = await axios.put(
-        `http://localhost:4000/approve-doctor/${doctorId}`,
+        `https://s46-vedhamadival-capstone-healio.onrender.com/approve-doctor/${doctorId}`,
         {},
         {
           headers: {

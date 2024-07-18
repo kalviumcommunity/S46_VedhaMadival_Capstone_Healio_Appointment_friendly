@@ -28,7 +28,7 @@ function ApplyDoctor() {
     try {
       dispatch(ShowLoading());
       const response = await axios.post(
-        "http://localhost:4000/doctor-details",
+        "https://s46-vedhamadival-capstone-healio.onrender.com/doctor-details",
         { ...formData, userId },
         {
           headers: {
@@ -63,7 +63,7 @@ function ApplyDoctor() {
       try {
         dispatch(ShowLoading());
         const response = await axios.get(
-          "http://localhost:4000/get-doctor-details",
+          "https://s46-vedhamadival-capstone-healio.onrender.com/get-doctor-details",
           {
             headers: {
               Authorization: "Bearer " + cookie.get("token"),

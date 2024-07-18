@@ -47,7 +47,7 @@ function Profile() {
       const getData = async () => {
         try {
           const response = await axios.get(
-            "http://localhost:4000/user-info-by-id",
+            "https://s46-vedhamadival-capstone-healio.onrender.com/user-info-by-id",
             {
               headers: {
                 Authorization: "Bearer " + cookie.get("token"),

@@ -22,7 +22,7 @@ function ConsultHere() {
   useEffect(() => {
     const getDoctors = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/doctors", {
+        const response = await axios.get("https://s46-vedhamadival-capstone-healio.onrender.com/doctors", {
           headers: {
             Authorization: "Bearer " + cookie.get("token"),
           },
